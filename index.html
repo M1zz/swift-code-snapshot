@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swift Code Snapshot</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #f0f0f5;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    color: #1f1f24;
+  }
+
+  /* ---- Top bar ---- */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e6;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0D8A8A;
+    letter-spacing: -0.5px;
+  }
+  .topbar h1 span { color: #AD3DA4; }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* ---- Layout ---- */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .panel {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e0e0e6;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    padding: 14px 20px;
+    background: #fafafc;
+    border-bottom: 1px solid #e8e8ee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6a6a7a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---- Input panel ---- */
+  .input-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .input-area textarea {
+    flex: 1;
+    min-height: 300px;
+    padding: 20px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1f1f24;
+    background: #fff;
+    tab-size: 4;
+  }
+  .input-area textarea::placeholder {
+    color: #b0b0c0;
+  }
+
+  /* Highlight input row */
+  .highlight-row {
+    padding: 12px 20px;
+    background: #fafafc;
+    border-top: 1px solid #e8e8ee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .highlight-row label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6a6a7a;
+    white-space: nowrap;
+  }
+  .highlight-row input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #d8d8e0;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    color: #1f1f24;
+    background: #fff;
+  }
+  .highlight-row input:focus {
+    border-color: #0D8A8A;
+    box-shadow: 0 0 0 3px rgba(13,138,138,0.1);
+  }
+  .highlight-row .hint {
+    font-size: 11px;
+    color: #a0a0b0;
+    white-space: nowrap;
+  }
+
+  /* Filename input */
+  .filename-row {
+    padding: 8px 20px;
+    background: #fafafc;
+    border-top: 1px solid #e8e8ee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .filename-row label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6a6a7a;
+    white-space: nowrap;
+  }
+  .filename-row input {
+    width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #d8d8e0;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    color: #1f1f24;
+    background: #fff;
+  }
+  .filename-row input:focus {
+    border-color: #0D8A8A;
+    box-shadow: 0 0 0 3px rgba(13,138,138,0.1);
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: #0D8A8A;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #0a7070; }
+  .btn-secondary {
+    background: #eee;
+    color: #555;
+  }
+  .btn-secondary:hover { background: #ddd; }
+  .btn-copy {
+    background: #f0f0f5;
+    color: #6a6a7a;
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+  .btn-copy:hover { background: #e4e4ea; }
+
+  /* ---- Preview panel ---- */
+  .preview-wrap {
+    flex: 1;
+    padding: 32px;
+    background: #f0f0f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
+  }
+
+  /* ---- Code window (output) ---- */
+  .code-window {
+    width: 100%;
+    max-width: 640px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.08),
+      0 8px 32px rgba(0,0,0,0.1),
+      0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .titlebar {
+    background: #e8e8ee;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 7px;
+    position: relative;
+    border-bottom: 1px solid #d8d8e0;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+  .titlebar-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #888899;
+    font-weight: 500;
+  }
+
+  .code-body {
+    background: #FFFFFF;
+    padding: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.82;
+  }
+
+  .line {
+    display: flex;
+    padding: 0 20px;
+    min-height: 25px;
+    border-left: 4px solid transparent;
+  }
+
+  .line.hl {
+    background: #D6F5F0;
+    border-left: 4px solid #0D8A8A;
+    padding-left: 19px;
+  }
+  .line.hl .ln { color: #0D8A8A; font-weight: 700; }
+
+  .ln {
+    color: #8a8a9a;
+    width: 30px;
+    text-align: right;
+    margin-right: 20px;
+    flex-shrink: 0;
+    user-select: none;
+    font-size: 12px;
+    padding-top: 1px;
+    font-weight: 500;
+  }
+
+  .lc { white-space: pre; }
+
+  /* Xcode Light syntax */
+  .s-kw { color: #AD3DA4; font-weight: 600; }
+  .s-type { color: #4B21B0; }
+  .s-call { color: #326D74; font-weight: 600; }
+  .s-str { color: #C41A16; }
+  .s-num { color: #1C00CF; }
+  .s-cmt { color: #707F8C; font-style: italic; }
+  .s-attr { color: #AD3DA4; }
+  .s-prop { color: #326D74; }
+  .s-plain { color: #1F1F24; }
+  .s-dot { color: #1F1F24; }
+  .s-preproc { color: #78492A; font-weight: 600; }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6a6a7a;
+    cursor: pointer;
+    user-select: none;
+  }
+  .theme-toggle input { display: none; }
+  .toggle-track {
+    width: 36px; height: 20px;
+    background: #d0d0d8;
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .theme-toggle input:checked ~ .toggle-track {
+    background: #0D8A8A;
+  }
+  .theme-toggle input:checked ~ .toggle-track::after {
+    transform: translateX(16px);
+  }
+
+  /* Dark theme overrides */
+  .code-window.dark .titlebar { background: #2a2a3a; border-bottom-color: #333345; }
+  .code-window.dark .titlebar-text { color: #6a6a8a; }
+  .code-window.dark .code-body { background: #1e1e2e; }
+  .code-window.dark .ln { color: #4a4a6a; }
+  .code-window.dark .line.hl { background: rgba(13,138,138,0.15); border-left-color: #0D8A8A; }
+  .code-window.dark .line.hl .ln { color: #1ABC9C; }
+
+  .code-window.dark .s-kw { color: #ff79c6; }
+  .code-window.dark .s-type { color: #8be9fd; }
+  .code-window.dark .s-call { color: #50fa7b; }
+  .code-window.dark .s-str { color: #f1fa8c; }
+  .code-window.dark .s-num { color: #bd93f9; }
+  .code-window.dark .s-cmt { color: #6272a4; }
+  .code-window.dark .s-attr { color: #ff79c6; }
+  .code-window.dark .s-prop { color: #50fa7b; }
+  .code-window.dark .s-plain { color: #f8f8f2; }
+  .code-window.dark .s-dot { color: #f8f8f2; }
+  .code-window.dark .s-preproc { color: #ffb86c; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <h1><span>Swift</span> Code Snapshot</h1>
+  <div class="topbar-right">
+    <label class="theme-toggle">
+      Light
+      <input type="checkbox" id="themeToggle">
+      <div class="toggle-track"></div>
+      Dark
+    </label>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Input Panel -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Swift 코드 입력</h2>
+      <button class="btn btn-primary" onclick="render()">미리보기 →</button>
+    </div>
+    <div class="input-area">
+      <textarea id="codeInput" placeholder="Swift 코드를 여기에 붙여넣으세요..." spellcheck="false">import MapKit
+import SwiftUI
+
+struct ContentView: View {
+    @State private var places: [MKMapItem] = []
+
+    var body: some View {
+        Map {
+
+        }
+    }
+}</textarea>
+    </div>
+    <div class="filename-row">
+      <label>파일명</label>
+      <input type="text" id="filenameInput" value="ContentView.swift" placeholder="ContentView.swift">
+    </div>
+    <div class="highlight-row">
+      <label>하이라이트 줄</label>
+      <input type="text" id="hlInput" placeholder="8-10" value="8-10">
+      <span class="hint">예: 3,5,8-10</span>
+    </div>
+  </div>
+
+  <!-- Preview Panel -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>미리보기</h2>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-copy" id="btnCopyImg" onclick="copyImage()">📋 이미지 복사</button>
+        <button class="btn btn-copy" onclick="saveImage()">💾 PNG 저장</button>
+        <button class="btn btn-copy" onclick="copyHTML()">HTML 복사</button>
+      </div>
+    </div>
+    <div class="preview-wrap" id="previewWrap">
+      <div class="code-window" id="codeWindow">
+        <div class="titlebar">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <span class="titlebar-text" id="titleText">ContentView.swift</span>
+        </div>
+        <div class="code-body" id="codeBody"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---- Swift tokenizer ----
+const SWIFT_KEYWORDS = new Set([
+  'import','struct','class','enum','protocol','extension','func','var','let',
+  'private','public','internal','fileprivate','open','static','override',
+  'mutating','nonmutating','if','else','guard','switch','case','default',
+  'for','while','repeat','do','catch','throw','throws','rethrows','try',
+  'return','break','continue','fallthrough','in','where','is','as',
+  'some','any','self','Self','nil','true','false','init','deinit',
+  'subscript','typealias','associatedtype','inout','lazy','weak','unowned',
+  'convenience','required','optional','final','dynamic','prefix','postfix',
+  'infix','operator','precedencegroup','async','await','actor','nonisolated',
+  'isolated','consuming','borrowing','sending','get','set','willSet','didSet',
+]);
+
+const SWIFT_TYPES = new Set([
+  'View','String','Int','Double','Float','Bool','Array','Dictionary','Set',
+  'Optional','Result','Error','Void','Any','AnyObject','Never',
+  'CGFloat','CGPoint','CGSize','CGRect',
+  'Color','Text','Image','Button','VStack','HStack','ZStack','List',
+  'NavigationStack','NavigationLink','ForEach','ScrollView','Spacer',
+  'Section','Group','Form','TabView','TextField','Toggle','Slider','Picker',
+  'Map','Marker','Annotation',
+  'MKMapItem','MKLocalSearch','MKPlacemark','MKCoordinateRegion',
+  'MKCoordinateSpan','CLLocationCoordinate2D','CLLocation',
+  'MapKit','SwiftUI','UIKit','Foundation','Combine',
+  'State','Binding','ObservedObject','StateObject','EnvironmentObject',
+  'Published','ObservableObject','Environment',
+]);
+
+function tokenizeLine(line) {
+  const tokens = [];
+  let i = 0;
+
+  while (i < line.length) {
+    // Whitespace
+    if (/\s/.test(line[i])) {
+      let start = i;
+      while (i < line.length && /\s/.test(line[i])) i++;
+      tokens.push({ type: 'plain', value: line.slice(start, i) });
+      continue;
+    }
+
+    // Line comment
+    if (line[i] === '/' && line[i+1] === '/') {
+      tokens.push({ type: 'cmt', value: line.slice(i) });
+      i = line.length;
+      continue;
+    }
+
+    // String
+    if (line[i] === '"') {
+      let start = i; i++;
+      while (i < line.length && line[i] !== '"') {
+        if (line[i] === '\\') i++;
+        i++;
+      }
+      if (i < line.length) i++;
+      tokens.push({ type: 'str', value: line.slice(start, i) });
+      continue;
+    }
+
+    // Number
+    if (/[0-9]/.test(line[i])) {
+      let start = i;
+      while (i < line.length && /[0-9.]/.test(line[i])) i++;
+      tokens.push({ type: 'num', value: line.slice(start, i) });
+      continue;
+    }
+
+    // @ attribute
+    if (line[i] === '@') {
+      let start = i; i++;
+      while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
+      tokens.push({ type: 'attr', value: line.slice(start, i) });
+      continue;
+    }
+
+    // # preprocessor
+    if (line[i] === '#') {
+      let start = i; i++;
+      while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
+      tokens.push({ type: 'preproc', value: line.slice(start, i) });
+      continue;
+    }
+
+    // Word
+    if (/[A-Za-z_]/.test(line[i])) {
+      let start = i;
+      while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
+      const word = line.slice(start, i);
+
+      if (SWIFT_KEYWORDS.has(word)) {
+        tokens.push({ type: 'kw', value: word });
+      } else if (SWIFT_TYPES.has(word)) {
+        tokens.push({ type: 'type', value: word });
+      } else if (i < line.length && (line[i] === '(' || line[i] === ' ' && line.slice(i).match(/^\s*\(/))) {
+        tokens.push({ type: 'call', value: word });
+      } else if (tokens.length > 0 && tokens[tokens.length-1].value === '.') {
+        tokens.push({ type: 'prop', value: word });
+      } else {
+        tokens.push({ type: 'plain', value: word });
+      }
+      continue;
+    }
+
+    // Dot
+    if (line[i] === '.') {
+      tokens.push({ type: 'dot', value: '.' });
+      i++;
+      continue;
+    }
+
+    // Other
+    tokens.push({ type: 'plain', value: line[i] });
+    i++;
+  }
+
+  return tokens;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ---- Parse highlight ranges ----
+function parseHighlightRanges(str) {
+  const set = new Set();
+  if (!str.trim()) return set;
+  const parts = str.split(',');
+  for (const part of parts) {
+    const trimmed = part.trim();
+    if (trimmed.includes('-')) {
+      const [a, b] = trimmed.split('-').map(Number);
+      if (!isNaN(a) && !isNaN(b)) {
+        for (let i = Math.min(a,b); i <= Math.max(a,b); i++) set.add(i);
+      }
+    } else {
+      const n = Number(trimmed);
+      if (!isNaN(n)) set.add(n);
+    }
+  }
+  return set;
+}
+
+// ---- Render ----
+function render() {
+  const code = document.getElementById('codeInput').value;
+  const hlStr = document.getElementById('hlInput').value;
+  const filename = document.getElementById('filenameInput').value || 'ContentView.swift';
+  const hlSet = parseHighlightRanges(hlStr);
+  const lines = code.split('\n');
+
+  document.getElementById('titleText').textContent = filename;
+
+  let html = '';
+  lines.forEach((line, idx) => {
+    const lineNum = idx + 1;
+    const isHL = hlSet.has(lineNum);
+    const tokens = tokenizeLine(line);
+
+    let codeHTML = '';
+    if (line.trim() === '') {
+      codeHTML = '<span style="color:transparent;font-size:4px;user-select:none">.</span>';
+    } else {
+      for (const tok of tokens) {
+        codeHTML += `<span class="s-${tok.type}">${escapeHTML(tok.value)}</span>`;
+      }
+    }
+
+    html += `<div class="line${isHL ? ' hl' : ''}">`;
+    html += `<span class="ln">${lineNum}</span>`;
+    html += `<span class="lc">${codeHTML}</span>`;
+    html += `</div>`;
+  });
+
+  document.getElementById('codeBody').innerHTML = html;
+}
+
+// ---- Theme toggle ----
+document.getElementById('themeToggle').addEventListener('change', function() {
+  document.getElementById('codeWindow').classList.toggle('dark', this.checked);
+});
+
+// ---- Copy HTML ----
+function copyHTML() {
+  const win = document.getElementById('codeWindow');
+  const html = win.outerHTML;
+
+  // Build standalone HTML
+  const isDark = win.classList.contains('dark');
+  const standalone = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f5;padding:40px}
+.code-window{width:680px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.1)}
+.titlebar{background:${isDark?'#2a2a3a':'#e8e8ee'};height:38px;display:flex;align-items:center;padding:0 14px;gap:7px;position:relative;border-bottom:1px solid ${isDark?'#333345':'#d8d8e0'}}
+.dot{width:11px;height:11px;border-radius:50%}.dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
+.titlebar-text{position:absolute;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#888899;font-weight:500}
+.code-body{background:${isDark?'#1e1e2e':'#fff'};padding:18px 0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.82}
+.line{display:flex;padding:0 20px;min-height:25px;border-left:4px solid transparent}
+.line.hl{background:${isDark?'rgba(13,138,138,.15)':'#D6F5F0'};border-left:4px solid #0D8A8A;padding-left:19px}
+.ln{color:${isDark?'#4a4a6a':'#8a8a9a'};width:30px;text-align:right;margin-right:20px;flex-shrink:0;user-select:none;font-size:12px;padding-top:1px;font-weight:500}
+.line.hl .ln{color:${isDark?'#1ABC9C':'#0D8A8A'};font-weight:700}
+.lc{white-space:pre}
+${isDark ? `
+.s-kw{color:#ff79c6;font-weight:600}.s-type{color:#8be9fd}.s-call{color:#50fa7b;font-weight:600}.s-str{color:#f1fa8c}.s-num{color:#bd93f9}.s-cmt{color:#6272a4;font-style:italic}.s-attr{color:#ff79c6}.s-prop{color:#50fa7b}.s-plain{color:#f8f8f2}.s-dot{color:#f8f8f2}.s-preproc{color:#ffb86c;font-weight:600}
+` : `
+.s-kw{color:#AD3DA4;font-weight:600}.s-type{color:#4B21B0}.s-call{color:#326D74;font-weight:600}.s-str{color:#C41A16}.s-num{color:#1C00CF}.s-cmt{color:#707F8C;font-style:italic}.s-attr{color:#AD3DA4}.s-prop{color:#326D74}.s-plain{color:#1F1F24}.s-dot{color:#1F1F24}.s-preproc{color:#78492A;font-weight:600}
+`}
+</style></head><body>${html}</body></html>`;
+
+  navigator.clipboard.writeText(standalone).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    const orig = btn.textContent;
+    btn.textContent = '복사 완료!';
+    btn.style.background = '#D6F5F0';
+    btn.style.color = '#0D8A8A';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+  });
+}
+
+// ---- Auto-render on Cmd+Enter ----
+document.getElementById('codeInput').addEventListener('keydown', function(e) {
+  // Tab support
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const start = this.selectionStart;
+    const end = this.selectionEnd;
+    this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+    this.selectionStart = this.selectionEnd = start + 4;
+    return;
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    render();
+  }
+});
+
+// Initial render
+render();
+
+// ---- Capture code window as canvas ----
+async function captureSnapshot() {
+  const el = document.getElementById('codeWindow');
+  const canvas = await html2canvas(el, {
+    scale: 3,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false,
+  });
+  return canvas;
+}
+
+// ---- Flash button feedback ----
+function flashBtn(btn, text) {
+  const orig = btn.innerHTML;
+  const origBg = btn.style.background;
+  const origColor = btn.style.color;
+  btn.innerHTML = text;
+  btn.style.background = '#D6F5F0';
+  btn.style.color = '#0D8A8A';
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.style.background = origBg;
+    btn.style.color = origColor;
+  }, 1500);
+}
+
+// ---- Copy as image to clipboard ----
+async function copyImage() {
+  const btn = document.getElementById('btnCopyImg');
+  btn.innerHTML = '⏳ 캡처 중...';
+
+  try {
+    const canvas = await captureSnapshot();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'image/png': blob })
+    ]);
+    flashBtn(btn, '✅ 복사 완료!');
+  } catch (err) {
+    // Fallback: clipboard API not supported, offer download instead
+    console.error(err);
+    flashBtn(btn, '⚠️ 브라우저 미지원');
+    // Auto-trigger download as fallback
+    saveImage();
+  }
+}
+
+// ---- Save as PNG file ----
+async function saveImage() {
+  const canvas = await captureSnapshot();
+  const link = document.createElement('a');
+  const filename = (document.getElementById('filenameInput').value || 'code')
+    .replace(/\.[^.]+$/, '');
+  link.download = `${filename}_snapshot.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+</script>
+
+</body>
+</html>
