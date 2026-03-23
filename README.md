@@ -1,5 +1,7 @@
 # Swift Code Snapshot
 
+**바로 사용하기 → [https://m1zz.github.io/swift-code-snapshot/](https://m1zz.github.io/swift-code-snapshot/)**
+
 Swift 코드를 Xcode 스타일 스냅샷 이미지로 만들어주는 도구입니다.
 
 ## 기능
@@ -20,9 +22,7 @@ Swift 코드를 Xcode 스타일 스냅샷 이미지로 만들어주는 도구입
 
 ## GitHub Pages 배포
 
-1. 이 레포를 GitHub에 push
-2. Settings → Pages → Source를 `main` 브랜치, `/ (root)` 선택
-3. `https://<username>.github.io/swift-code-snapshot/` 에서 접속
+배포 주소: [https://m1zz.github.io/swift-code-snapshot/](https://m1zz.github.io/swift-code-snapshot/)
 
 ## 만든 사람
 
