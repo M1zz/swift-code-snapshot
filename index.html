@@ -199,30 +199,6 @@
   .color-swatch::-webkit-color-swatch-wrapper { padding: 0; }
   .color-swatch::-webkit-color-swatch { border: none; border-radius: 4px; }
 
-  /* Scale buttons */
-  .scale-btns { display: flex; gap: 4px; }
-  .scale-btn {
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid #d8d8e0;
-    background: #f4f4f8;
-    font-size: 12px;
-    font-weight: 600;
-    color: #6a6a7a;
-    cursor: pointer;
-    transition: all 0.12s;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .scale-btn:hover { border-color: #0D8A8A; color: #0D8A8A; }
-  .scale-btn.active { background: #0D8A8A; color: #fff; border-color: #0D8A8A; }
-
-  /* Scale warning badge */
-  .scale-warn {
-    font-size: 11px;
-    color: #e07800;
-    display: none;
-    white-space: nowrap;
-  }
 
   /* Font size controls */
   .font-size-ctrl {
@@ -333,13 +309,13 @@
 
   /* ---- Preview panel ---- */
   .preview-wrap {
-    flex: 1;
     padding: 32px;
     background: #f0f0f5;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     overflow: auto;
+    max-height: 70vh;
   }
 
   /* ---- Code window (output) ---- */
@@ -582,12 +558,6 @@
           <button onclick="adjustFontSize(+1)" title="폰트 크게">+</button>
         </div>
         <button class="wrap-btn" id="wrapBtn" onclick="toggleWrap()">줄바꿈</button>
-        <div class="scale-btns">
-          <button class="scale-btn" data-scale="1" onclick="setScale(1)">1x</button>
-          <button class="scale-btn" data-scale="2" onclick="setScale(2)">2x</button>
-          <button class="scale-btn active" data-scale="3" onclick="setScale(3)">3x</button>
-        </div>
-        <span class="scale-warn" id="scaleWarn">⚠️ 긴 코드 → 2x 권장</span>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="btn btn-copy" id="btnCopyImg" onclick="copyImage()">📋 이미지 복사</button>
@@ -892,8 +862,6 @@ function render() {
   });
 
   document.getElementById('codeBody').innerHTML = html;
-  // Update scale warning after content changes height
-  requestAnimationFrame(checkScaleWarning);
 }
 
 // ================================================================
@@ -925,7 +893,6 @@ function adjustFontSize(delta) {
   codeFontSize = Math.min(20, Math.max(10, codeFontSize + delta));
   document.getElementById('codeBody').style.fontSize = codeFontSize + 'px';
   document.getElementById('fontSizeLabel').textContent = codeFontSize + 'px';
-  requestAnimationFrame(checkScaleWarning);
 }
 
 // ================================================================
@@ -937,42 +904,18 @@ function toggleWrap() {
   wrapEnabled = !wrapEnabled;
   document.getElementById('codeBody').classList.toggle('wrap-on', wrapEnabled);
   document.getElementById('wrapBtn').classList.toggle('active', wrapEnabled);
-  requestAnimationFrame(checkScaleWarning);
 }
 
 // ================================================================
-// Scale selector
+// Capture — 3x, auto-reduce if canvas would exceed Safari 4096px limit
 // ================================================================
-let captureScale = 3;
-// Safari canvas pixel limit: ~16 megapixels (e.g. 4096×4096)
 const MAX_CANVAS_PX = 4096;
 
-function setScale(s) {
-  captureScale = s;
-  document.querySelectorAll('.scale-btn').forEach(btn => {
-    btn.classList.toggle('active', Number(btn.dataset.scale) === s);
-  });
-  checkScaleWarning();
-}
-
-function checkScaleWarning() {
-  const el = document.getElementById('codeWindow');
-  const rect = el.getBoundingClientRect();
-  const warn = document.getElementById('scaleWarn');
-  const willExceed = rect.height * captureScale > MAX_CANVAS_PX
-                  || rect.width  * captureScale > MAX_CANVAS_PX;
-  warn.style.display = willExceed ? 'inline' : 'none';
-}
-
-// ================================================================
-// Capture — auto-reduce scale if canvas would exceed browser limit
-// ================================================================
 function captureSnapshot() {
   const el = document.getElementById('codeWindow');
   const rect = el.getBoundingClientRect();
 
-  // Find the largest scale that fits within MAX_CANVAS_PX
-  let scale = captureScale;
+  let scale = 3;
   while (scale > 1 && (rect.height * scale > MAX_CANVAS_PX || rect.width * scale > MAX_CANVAS_PX)) {
     scale -= 0.5;
   }
