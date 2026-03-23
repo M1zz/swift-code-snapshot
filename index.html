@@ -29,27 +29,19 @@
     top: 0;
     z-index: 100;
   }
-  .topbar h1 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0D8A8A;
-    letter-spacing: -0.5px;
-  }
+  .topbar h1 { font-size: 18px; font-weight: 700; color: #0D8A8A; letter-spacing: -0.5px; }
   .topbar h1 span { color: #AD3DA4; }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
 
   /* ---- Layout ---- */
   .container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 32px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 28px;
+    align-items: start;
   }
 
   .panel {
@@ -69,104 +61,157 @@
     align-items: center;
     justify-content: space-between;
   }
-  .panel-header h2 {
-    font-size: 13px;
-    font-weight: 600;
-    color: #6a6a7a;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  .panel-header h2 { font-size: 13px; font-weight: 600; color: #6a6a7a; text-transform: uppercase; letter-spacing: 1px; }
 
-  /* ---- Input panel ---- */
-  .input-area {
-    flex: 1;
+  /* ---- Tab bar ---- */
+  .tab-bar {
     display: flex;
-    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 10px 16px 0;
+    background: #f4f4f8;
+    border-bottom: 1px solid #e0e0e6;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
   }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 13px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #dcdce4;
+    border-bottom: none;
+    background: #ebebf0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7a7a8a;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: all 0.15s;
+    position: relative;
+    bottom: -1px;
+  }
+  .tab:hover { background: #e0e0e8; }
+  .tab.active {
+    background: #fff;
+    color: #0D8A8A;
+    border-color: #e0e0e6;
+    border-bottom-color: #fff;
+    font-weight: 600;
+  }
+  .tab-close {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #aaa;
+    line-height: 1;
+    transition: all 0.12s;
+  }
+  .tab-close:hover { background: #ccc; color: #333; }
+  .tab-add {
+    padding: 5px 10px;
+    margin-bottom: 1px;
+    border-radius: 7px;
+    background: transparent;
+    border: 1px dashed #c0c0cc;
+    font-size: 15px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .tab-add:hover { border-color: #0D8A8A; color: #0D8A8A; }
+
+  /* ---- Input area ---- */
+  .input-area { flex: 1; display: flex; flex-direction: column; }
   .input-area textarea {
     flex: 1;
-    min-height: 300px;
+    min-height: 260px;
     padding: 20px;
     border: none;
     outline: none;
     resize: none;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.8;
     color: #1f1f24;
     background: #fff;
     tab-size: 4;
   }
-  .input-area textarea::placeholder {
-    color: #b0b0c0;
-  }
+  .input-area textarea::placeholder { color: #b0b0c0; }
 
-  /* Highlight input row */
-  .highlight-row {
-    padding: 12px 20px;
+  /* ---- Row inputs ---- */
+  .input-row {
+    padding: 9px 20px;
     background: #fafafc;
     border-top: 1px solid #e8e8ee;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
   }
-  .highlight-row label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #6a6a7a;
-    white-space: nowrap;
-  }
-  .highlight-row input {
+  .input-row label { font-size: 12px; font-weight: 600; color: #6a6a7a; white-space: nowrap; }
+  .input-row input {
     flex: 1;
-    padding: 8px 12px;
+    min-width: 80px;
+    padding: 7px 11px;
     border: 1px solid #d8d8e0;
-    border-radius: 8px;
+    border-radius: 7px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     outline: none;
     color: #1f1f24;
     background: #fff;
   }
-  .highlight-row input:focus {
-    border-color: #0D8A8A;
-    box-shadow: 0 0 0 3px rgba(13,138,138,0.1);
-  }
-  .highlight-row .hint {
-    font-size: 11px;
-    color: #a0a0b0;
-    white-space: nowrap;
-  }
+  .input-row input:focus { border-color: #0D8A8A; box-shadow: 0 0 0 3px rgba(13,138,138,0.1); }
+  .input-row .hint { font-size: 11px; color: #b0b0c0; white-space: nowrap; }
+  .input-row .diff-add-input:focus { border-color: #28a745; box-shadow: 0 0 0 3px rgba(40,167,69,0.1); }
+  .input-row .diff-del-input:focus { border-color: #d73a49; box-shadow: 0 0 0 3px rgba(215,58,73,0.1); }
 
-  /* Filename input */
-  .filename-row {
-    padding: 8px 20px;
+  .input-row .diff-label-add { color: #28a745; }
+  .input-row .diff-label-del { color: #d73a49; }
+
+  /* Annotation textarea row */
+  .annot-row {
+    padding: 0;
     background: #fafafc;
     border-top: 1px solid #e8e8ee;
     display: flex;
+    flex-direction: column;
+  }
+  .annot-row-header {
+    padding: 8px 20px 4px;
+    display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
-  .filename-row label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #6a6a7a;
-    white-space: nowrap;
-  }
-  .filename-row input {
-    width: 200px;
+  .annot-row-header label { font-size: 12px; font-weight: 600; color: #8a6914; }
+  .annot-row-header .hint { font-size: 11px; color: #b0b0c0; }
+  .annot-row textarea {
+    margin: 0 12px 10px;
     padding: 8px 12px;
-    border: 1px solid #d8d8e0;
+    border: 1px solid #e6d080;
     border-radius: 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    outline: none;
+    line-height: 1.6;
     color: #1f1f24;
-    background: #fff;
+    background: #fffdf0;
+    outline: none;
+    resize: none;
+    min-height: 56px;
   }
-  .filename-row input:focus {
-    border-color: #0D8A8A;
-    box-shadow: 0 0 0 3px rgba(13,138,138,0.1);
-  }
+  .annot-row textarea:focus { border-color: #c8a000; box-shadow: 0 0 0 3px rgba(200,160,0,0.1); }
+  .annot-row textarea::placeholder { color: #c8b870; }
 
   /* ---- Buttons ---- */
   .btn {
@@ -179,22 +224,11 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  .btn-primary {
-    background: #0D8A8A;
-    color: #fff;
-  }
+  .btn-primary { background: #0D8A8A; color: #fff; }
   .btn-primary:hover { background: #0a7070; }
-  .btn-secondary {
-    background: #eee;
-    color: #555;
-  }
+  .btn-secondary { background: #eee; color: #555; }
   .btn-secondary:hover { background: #ddd; }
-  .btn-copy {
-    background: #f0f0f5;
-    color: #6a6a7a;
-    font-size: 12px;
-    padding: 6px 14px;
-  }
+  .btn-copy { background: #f0f0f5; color: #6a6a7a; font-size: 12px; padding: 6px 14px; }
   .btn-copy:hover { background: #e4e4ea; }
 
   /* ---- Preview panel ---- */
@@ -210,8 +244,8 @@
 
   /* ---- Code window (output) ---- */
   .code-window {
-    width: 100%;
-    max-width: 640px;
+    width: fit-content;
+    min-width: min(100%, 580px);
     border-radius: 12px;
     overflow: hidden;
     box-shadow:
@@ -252,25 +286,33 @@
     line-height: 1.82;
   }
 
+  /* ---- Lines ---- */
   .line {
     display: flex;
-    padding: 0 20px;
+    align-items: center;
+    padding: 0 20px 0 0;
     min-height: 25px;
     border-left: 4px solid transparent;
   }
 
-  .line.hl {
-    background: #D6F5F0;
-    border-left: 4px solid #0D8A8A;
-    padding-left: 19px;
-  }
+  /* Highlight */
+  .line.hl { background: #D6F5F0; border-left-color: #0D8A8A; }
   .line.hl .ln { color: #0D8A8A; font-weight: 700; }
+
+  /* Diff add */
+  .line.diff-add { background: #e6ffed; border-left-color: #28a745; }
+  .line.diff-add .ln { color: #28a745; font-weight: 700; }
+
+  /* Diff del */
+  .line.diff-del { background: #ffeef0; border-left-color: #d73a49; }
+  .line.diff-del .ln { color: #d73a49; font-weight: 700; }
 
   .ln {
     color: #8a8a9a;
-    width: 30px;
+    width: 36px;
     text-align: right;
     margin-right: 20px;
+    margin-left: 16px;
     flex-shrink: 0;
     user-select: none;
     font-size: 12px;
@@ -280,7 +322,44 @@
 
   .lc { white-space: pre; }
 
-  /* Xcode Light syntax */
+  /* ---- Callout bubble ---- */
+  .callout {
+    flex-shrink: 0;
+    margin-left: 18px;
+    background: #fffbe6;
+    border: 1.5px solid #e6c000;
+    border-radius: 7px;
+    padding: 2px 11px;
+    font-size: 11.5px;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    font-weight: 500;
+    color: #7a5c00;
+    white-space: nowrap;
+    position: relative;
+    line-height: 1.7;
+    margin-right: 20px;
+  }
+  /* Arrow pointing left toward code */
+  .callout::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: #e6c000;
+  }
+  .callout::after {
+    content: '';
+    position: absolute;
+    right: calc(100% - 1.5px);
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #fffbe6;
+  }
+
+  /* ---- Syntax colors (Xcode Light) ---- */
   .s-kw { color: #AD3DA4; font-weight: 600; }
   .s-type { color: #4B21B0; }
   .s-call { color: #326D74; font-weight: 600; }
@@ -293,48 +372,25 @@
   .s-dot { color: #1F1F24; }
   .s-preproc { color: #78492A; font-weight: 600; }
 
-  /* Theme toggle */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #6a6a7a;
-    cursor: pointer;
-    user-select: none;
-  }
+  /* ---- Theme toggle ---- */
+  .theme-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6a6a7a; cursor: pointer; user-select: none; }
   .theme-toggle input { display: none; }
-  .toggle-track {
-    width: 36px; height: 20px;
-    background: #d0d0d8;
-    border-radius: 10px;
-    position: relative;
-    transition: background 0.2s;
-  }
-  .toggle-track::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 16px; height: 16px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform 0.2s;
-  }
-  .theme-toggle input:checked ~ .toggle-track {
-    background: #0D8A8A;
-  }
-  .theme-toggle input:checked ~ .toggle-track::after {
-    transform: translateX(16px);
-  }
+  .toggle-track { width: 36px; height: 20px; background: #d0d0d8; border-radius: 10px; position: relative; transition: background 0.2s; }
+  .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+  .theme-toggle input:checked ~ .toggle-track { background: #0D8A8A; }
+  .theme-toggle input:checked ~ .toggle-track::after { transform: translateX(16px); }
 
-  /* Dark theme overrides */
+  /* ---- Dark theme overrides ---- */
   .code-window.dark .titlebar { background: #2a2a3a; border-bottom-color: #333345; }
   .code-window.dark .titlebar-text { color: #6a6a8a; }
   .code-window.dark .code-body { background: #1e1e2e; }
   .code-window.dark .ln { color: #4a4a6a; }
   .code-window.dark .line.hl { background: rgba(13,138,138,0.15); border-left-color: #0D8A8A; }
   .code-window.dark .line.hl .ln { color: #1ABC9C; }
-
+  .code-window.dark .line.diff-add { background: rgba(40,167,69,0.13); border-left-color: #3fb950; }
+  .code-window.dark .line.diff-add .ln { color: #3fb950; }
+  .code-window.dark .line.diff-del { background: rgba(215,58,73,0.13); border-left-color: #f85149; }
+  .code-window.dark .line.diff-del .ln { color: #f85149; }
   .code-window.dark .s-kw { color: #ff79c6; }
   .code-window.dark .s-type { color: #8be9fd; }
   .code-window.dark .s-call { color: #50fa7b; }
@@ -346,12 +402,13 @@
   .code-window.dark .s-plain { color: #f8f8f2; }
   .code-window.dark .s-dot { color: #f8f8f2; }
   .code-window.dark .s-preproc { color: #ffb86c; }
+  .code-window.dark .callout { background: #2a2500; border-color: #7a6000; color: #e0c050; }
+  .code-window.dark .callout::before { border-right-color: #7a6000; }
+  .code-window.dark .callout::after { border-right-color: #2a2500; }
 
-  /* Responsive */
-  @media (max-width: 900px) {
-    .container {
-      grid-template-columns: 1fr;
-    }
+  /* ---- Responsive ---- */
+  @media (max-width: 960px) {
+    .container { grid-template-columns: 1fr; }
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -374,32 +431,42 @@
 
   <!-- Input Panel -->
   <div class="panel">
+    <!-- Tab bar -->
+    <div class="tab-bar" id="tabBar"></div>
+
     <div class="panel-header">
       <h2>Swift 코드 입력</h2>
       <button class="btn btn-primary" onclick="render()">미리보기 →</button>
     </div>
+
     <div class="input-area">
-      <textarea id="codeInput" placeholder="Swift 코드를 여기에 붙여넣으세요..." spellcheck="false">import MapKit
-import SwiftUI
-
-struct ContentView: View {
-    @State private var places: [MKMapItem] = []
-
-    var body: some View {
-        Map {
-
-        }
-    }
-}</textarea>
+      <textarea id="codeInput" placeholder="Swift 코드를 여기에 붙여넣으세요..." spellcheck="false"></textarea>
     </div>
-    <div class="filename-row">
+
+    <div class="input-row">
       <label>파일명</label>
-      <input type="text" id="filenameInput" value="ContentView.swift" placeholder="ContentView.swift">
+      <input type="text" id="filenameInput" value="ContentView.swift" placeholder="ContentView.swift" style="max-width:220px;">
     </div>
-    <div class="highlight-row">
+
+    <div class="input-row">
       <label>하이라이트 줄</label>
-      <input type="text" id="hlInput" placeholder="8-10" value="8-10">
+      <input type="text" id="hlInput" placeholder="8-10">
       <span class="hint">예: 3,5,8-10</span>
+    </div>
+
+    <div class="input-row">
+      <label class="diff-label-add">추가 줄 (+)</label>
+      <input type="text" id="addedInput" class="diff-add-input" placeholder="3,5">
+      <label class="diff-label-del" style="margin-left:6px;">삭제 줄 (−)</label>
+      <input type="text" id="removedInput" class="diff-del-input" placeholder="7">
+    </div>
+
+    <div class="annot-row">
+      <div class="annot-row-header">
+        <label>💬 말풍선 주석</label>
+        <span class="hint">줄번호: 텍스트 &nbsp;(한 줄에 하나)</span>
+      </div>
+      <textarea id="annotationsInput" placeholder="8: ← 여기만 바꿔보세요!&#10;3: 이 줄이 핵심입니다"></textarea>
     </div>
   </div>
 
@@ -429,7 +496,126 @@ struct ContentView: View {
 </div>
 
 <script>
-// ---- Swift tokenizer ----
+// ================================================================
+// Tab state
+// ================================================================
+const DEFAULT_CODE = `import MapKit
+import SwiftUI
+
+struct ContentView: View {
+    @State private var places: [MKMapItem] = []
+
+    var body: some View {
+        Map {
+
+        }
+    }
+}`;
+
+let tabs = [{
+  id: 1, name: 'Step 1',
+  code: DEFAULT_CODE, filename: 'ContentView.swift',
+  highlights: '8-10', addedLines: '', removedLines: '', annotations: ''
+}];
+let activeTabIdx = 0;
+let tabCounter = 1;
+
+function readInputs() {
+  return {
+    code:        document.getElementById('codeInput').value,
+    filename:    document.getElementById('filenameInput').value,
+    highlights:  document.getElementById('hlInput').value,
+    addedLines:  document.getElementById('addedInput').value,
+    removedLines:document.getElementById('removedInput').value,
+    annotations: document.getElementById('annotationsInput').value,
+  };
+}
+
+function applyInputs(tab) {
+  document.getElementById('codeInput').value       = tab.code;
+  document.getElementById('filenameInput').value   = tab.filename;
+  document.getElementById('hlInput').value         = tab.highlights;
+  document.getElementById('addedInput').value      = tab.addedLines;
+  document.getElementById('removedInput').value    = tab.removedLines;
+  document.getElementById('annotationsInput').value = tab.annotations;
+}
+
+function saveCurrentTab() {
+  tabs[activeTabIdx] = { ...tabs[activeTabIdx], ...readInputs() };
+}
+
+function switchTab(idx) {
+  saveCurrentTab();
+  activeTabIdx = idx;
+  applyInputs(tabs[idx]);
+  renderTabBar();
+  render();
+}
+
+function addTab() {
+  saveCurrentTab();
+  tabCounter++;
+  tabs.push({
+    id: tabCounter, name: `Step ${tabCounter}`,
+    code: '', filename: 'ContentView.swift',
+    highlights: '', addedLines: '', removedLines: '', annotations: ''
+  });
+  switchTab(tabs.length - 1);
+}
+
+function removeTab(idx) {
+  if (tabs.length === 1) return;
+  tabs.splice(idx, 1);
+  const newIdx = Math.min(activeTabIdx, tabs.length - 1);
+  activeTabIdx = newIdx;
+  applyInputs(tabs[newIdx]);
+  renderTabBar();
+  render();
+}
+
+function renameTab(idx, e) {
+  e.stopPropagation();
+  const name = prompt('탭 이름:', tabs[idx].name);
+  if (name && name.trim()) {
+    tabs[idx].name = name.trim();
+    renderTabBar();
+  }
+}
+
+function renderTabBar() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = '';
+  tabs.forEach((tab, idx) => {
+    const el = document.createElement('div');
+    el.className = 'tab' + (idx === activeTabIdx ? ' active' : '');
+    el.onclick = () => switchTab(idx);
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = tab.name;
+    nameSpan.ondblclick = (e) => renameTab(idx, e);
+    el.appendChild(nameSpan);
+
+    if (tabs.length > 1) {
+      const close = document.createElement('span');
+      close.className = 'tab-close';
+      close.textContent = '×';
+      close.onclick = (e) => { e.stopPropagation(); removeTab(idx); };
+      el.appendChild(close);
+    }
+    bar.appendChild(el);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'tab-add';
+  addBtn.textContent = '+';
+  addBtn.title = '탭 추가';
+  addBtn.onclick = addTab;
+  bar.appendChild(addBtn);
+}
+
+// ================================================================
+// Swift tokenizer
+// ================================================================
 const SWIFT_KEYWORDS = new Set([
   'import','struct','class','enum','protocol','extension','func','var','let',
   'private','public','internal','fileprivate','open','static','override',
@@ -461,91 +647,47 @@ const SWIFT_TYPES = new Set([
 function tokenizeLine(line) {
   const tokens = [];
   let i = 0;
-
   while (i < line.length) {
-    // Whitespace
     if (/\s/.test(line[i])) {
-      let start = i;
-      while (i < line.length && /\s/.test(line[i])) i++;
-      tokens.push({ type: 'plain', value: line.slice(start, i) });
-      continue;
+      let s = i; while (i < line.length && /\s/.test(line[i])) i++;
+      tokens.push({ type: 'plain', value: line.slice(s, i) }); continue;
     }
-
-    // Line comment
     if (line[i] === '/' && line[i+1] === '/') {
-      tokens.push({ type: 'cmt', value: line.slice(i) });
-      i = line.length;
-      continue;
+      tokens.push({ type: 'cmt', value: line.slice(i) }); i = line.length; continue;
     }
-
-    // String
     if (line[i] === '"') {
-      let start = i; i++;
-      while (i < line.length && line[i] !== '"') {
-        if (line[i] === '\\') i++;
-        i++;
-      }
+      let s = i; i++;
+      while (i < line.length && line[i] !== '"') { if (line[i] === '\\') i++; i++; }
       if (i < line.length) i++;
-      tokens.push({ type: 'str', value: line.slice(start, i) });
-      continue;
+      tokens.push({ type: 'str', value: line.slice(s, i) }); continue;
     }
-
-    // Number
     if (/[0-9]/.test(line[i])) {
-      let start = i;
-      while (i < line.length && /[0-9.]/.test(line[i])) i++;
-      tokens.push({ type: 'num', value: line.slice(start, i) });
-      continue;
+      let s = i; while (i < line.length && /[0-9.]/.test(line[i])) i++;
+      tokens.push({ type: 'num', value: line.slice(s, i) }); continue;
     }
-
-    // @ attribute
     if (line[i] === '@') {
-      let start = i; i++;
+      let s = i; i++;
       while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
-      tokens.push({ type: 'attr', value: line.slice(start, i) });
-      continue;
+      tokens.push({ type: 'attr', value: line.slice(s, i) }); continue;
     }
-
-    // # preprocessor
     if (line[i] === '#') {
-      let start = i; i++;
+      let s = i; i++;
       while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
-      tokens.push({ type: 'preproc', value: line.slice(start, i) });
-      continue;
+      tokens.push({ type: 'preproc', value: line.slice(s, i) }); continue;
     }
-
-    // Word
     if (/[A-Za-z_]/.test(line[i])) {
-      let start = i;
-      while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
-      const word = line.slice(start, i);
-
-      if (SWIFT_KEYWORDS.has(word)) {
-        tokens.push({ type: 'kw', value: word });
-      } else if (SWIFT_TYPES.has(word)) {
-        tokens.push({ type: 'type', value: word });
-      } else if (i < line.length && (line[i] === '(' || line[i] === ' ' && line.slice(i).match(/^\s*\(/))) {
-        tokens.push({ type: 'call', value: word });
-      } else if (tokens.length > 0 && tokens[tokens.length-1].value === '.') {
-        tokens.push({ type: 'prop', value: word });
-      } else {
-        tokens.push({ type: 'plain', value: word });
-      }
+      let s = i; while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
+      const word = line.slice(s, i);
+      if (SWIFT_KEYWORDS.has(word)) tokens.push({ type: 'kw', value: word });
+      else if (SWIFT_TYPES.has(word)) tokens.push({ type: 'type', value: word });
+      else if (i < line.length && line[i] === '(') tokens.push({ type: 'call', value: word });
+      else if (tokens.length > 0 && tokens[tokens.length-1].value === '.') tokens.push({ type: 'prop', value: word });
+      else tokens.push({ type: 'plain', value: word });
       continue;
     }
-
-    // Dot
-    if (line[i] === '.') {
-      tokens.push({ type: 'dot', value: '.' });
-      i++;
-      continue;
-    }
-
-    // Other
-    tokens.push({ type: 'plain', value: line[i] });
-    i++;
+    if (line[i] === '.') { tokens.push({ type: 'dot', value: '.' }); i++; continue; }
+    tokens.push({ type: 'plain', value: line[i] }); i++;
   }
-
   return tokens;
 }
 
@@ -553,188 +695,251 @@ function escapeHTML(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ---- Parse highlight ranges ----
-function parseHighlightRanges(str) {
+// ================================================================
+// Parse helpers
+// ================================================================
+function parseLineSet(str) {
   const set = new Set();
   if (!str.trim()) return set;
-  const parts = str.split(',');
-  for (const part of parts) {
-    const trimmed = part.trim();
-    if (trimmed.includes('-')) {
-      const [a, b] = trimmed.split('-').map(Number);
-      if (!isNaN(a) && !isNaN(b)) {
-        for (let i = Math.min(a,b); i <= Math.max(a,b); i++) set.add(i);
-      }
+  for (const part of str.split(',')) {
+    const t = part.trim();
+    if (t.includes('-')) {
+      const [a, b] = t.split('-').map(Number);
+      if (!isNaN(a) && !isNaN(b)) for (let i = Math.min(a,b); i <= Math.max(a,b); i++) set.add(i);
     } else {
-      const n = Number(trimmed);
-      if (!isNaN(n)) set.add(n);
+      const n = Number(t);
+      if (!isNaN(n) && n > 0) set.add(n);
     }
   }
   return set;
 }
 
-// ---- Render ----
+function parseAnnotations(str) {
+  const map = new Map();
+  if (!str.trim()) return map;
+  for (const line of str.split('\n')) {
+    const m = line.match(/^(\d+)\s*[:：]\s*(.+)/);
+    if (m) map.set(parseInt(m[1]), m[2].trim());
+  }
+  return map;
+}
+
+// ================================================================
+// Render
+// ================================================================
 function render() {
-  const code = document.getElementById('codeInput').value;
-  const hlStr = document.getElementById('hlInput').value;
-  const filename = document.getElementById('filenameInput').value || 'ContentView.swift';
-  const hlSet = parseHighlightRanges(hlStr);
-  const lines = code.split('\n');
+  const code      = document.getElementById('codeInput').value;
+  const hlStr     = document.getElementById('hlInput').value;
+  const filename  = document.getElementById('filenameInput').value || 'ContentView.swift';
+  const addedStr  = document.getElementById('addedInput').value;
+  const removedStr= document.getElementById('removedInput').value;
+  const annotStr  = document.getElementById('annotationsInput').value;
+
+  const hlSet     = parseLineSet(hlStr);
+  const addedSet  = parseLineSet(addedStr);
+  const removedSet= parseLineSet(removedStr);
+  const annotMap  = parseAnnotations(annotStr);
 
   document.getElementById('titleText').textContent = filename;
 
+  const lines = code.split('\n');
   let html = '';
+
   lines.forEach((line, idx) => {
     const lineNum = idx + 1;
-    const isHL = hlSet.has(lineNum);
-    const tokens = tokenizeLine(line);
+    const isHL      = hlSet.has(lineNum);
+    const isAdded   = !isHL && addedSet.has(lineNum);
+    const isRemoved = !isHL && !isAdded && removedSet.has(lineNum);
+    const annotation = annotMap.get(lineNum);
 
     let codeHTML = '';
     if (line.trim() === '') {
-      codeHTML = '<span style="color:transparent;font-size:4px;user-select:none">.</span>';
+      codeHTML = '<span style="color:transparent;font-size:4px;user-select:none">·</span>';
     } else {
-      for (const tok of tokens) {
+      for (const tok of tokenizeLine(line)) {
         codeHTML += `<span class="s-${tok.type}">${escapeHTML(tok.value)}</span>`;
       }
     }
 
-    html += `<div class="line${isHL ? ' hl' : ''}">`;
-    html += `<span class="ln">${lineNum}</span>`;
+    let cls = 'line';
+    if (isHL)      cls += ' hl';
+    else if (isAdded)   cls += ' diff-add';
+    else if (isRemoved) cls += ' diff-del';
+
+    // Line number: show + or - symbol for diff lines
+    const lnLabel = isAdded ? '+' : isRemoved ? '−' : lineNum;
+
+    html += `<div class="${cls}">`;
+    html += `<span class="ln">${lnLabel}</span>`;
     html += `<span class="lc">${codeHTML}</span>`;
+    if (annotation) html += `<span class="callout">${escapeHTML(annotation)}</span>`;
     html += `</div>`;
   });
 
   document.getElementById('codeBody').innerHTML = html;
 }
 
-// ---- Theme toggle ----
+// ================================================================
+// Theme
+// ================================================================
 document.getElementById('themeToggle').addEventListener('change', function() {
   document.getElementById('codeWindow').classList.toggle('dark', this.checked);
 });
 
-// ---- Copy HTML ----
+// ================================================================
+// Capture
+// ================================================================
+function captureSnapshot() {
+  const el = document.getElementById('codeWindow');
+  return html2canvas(el, {
+    scale: 3,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false,
+    onclone: (doc) => {
+      // Ensure fonts are loaded in the cloned document
+      return document.fonts.ready;
+    }
+  });
+}
+
+function flashBtn(btn, text) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = text;
+  btn.style.background = '#D6F5F0';
+  btn.style.color = '#0D8A8A';
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 1800);
+}
+
+// ================================================================
+// Copy image — Safari fix: pass Promise directly to ClipboardItem
+// so the write stays within the user gesture scope
+// ================================================================
+async function copyImage() {
+  const btn = document.getElementById('btnCopyImg');
+  btn.innerHTML = '⏳ 캡처 중...';
+
+  try {
+    if (!navigator.clipboard || !window.ClipboardItem) {
+      throw new Error('Clipboard API unavailable');
+    }
+    // Safari requires the Promise to be created synchronously
+    // inside the user gesture — do NOT await captureSnapshot() first
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': captureSnapshot().then(canvas =>
+          new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+        )
+      })
+    ]);
+    flashBtn(btn, '✅ 복사 완료!');
+  } catch (err) {
+    console.error('Clipboard write failed:', err);
+    // Fallback: download
+    try {
+      const canvas = await captureSnapshot();
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = getFilenameBase() + '_snapshot.png';
+      a.click();
+      URL.revokeObjectURL(url);
+      flashBtn(btn, '💾 저장으로 대체');
+    } catch (e2) {
+      flashBtn(btn, '⚠️ 실패');
+    }
+  }
+}
+
+// ================================================================
+// Save PNG
+// ================================================================
+function getFilenameBase() {
+  return (document.getElementById('filenameInput').value || 'code').replace(/\.[^.]+$/, '');
+}
+
+async function saveImage() {
+  const canvas = await captureSnapshot();
+  const link = document.createElement('a');
+  link.download = getFilenameBase() + '_snapshot.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ================================================================
+// Copy HTML
+// ================================================================
 function copyHTML() {
   const win = document.getElementById('codeWindow');
-  const html = win.outerHTML;
-
-  // Build standalone HTML
   const isDark = win.classList.contains('dark');
-  const standalone = `<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f5;padding:40px}
-.code-window{width:680px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.1)}
-.titlebar{background:${isDark?'#2a2a3a':'#e8e8ee'};height:38px;display:flex;align-items:center;padding:0 14px;gap:7px;position:relative;border-bottom:1px solid ${isDark?'#333345':'#d8d8e0'}}
-.dot{width:11px;height:11px;border-radius:50%}.dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
-.titlebar-text{position:absolute;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#888899;font-weight:500}
-.code-body{background:${isDark?'#1e1e2e':'#fff'};padding:18px 0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.82}
-.line{display:flex;padding:0 20px;min-height:25px;border-left:4px solid transparent}
-.line.hl{background:${isDark?'rgba(13,138,138,.15)':'#D6F5F0'};border-left:4px solid #0D8A8A;padding-left:19px}
-.ln{color:${isDark?'#4a4a6a':'#8a8a9a'};width:30px;text-align:right;margin-right:20px;flex-shrink:0;user-select:none;font-size:12px;padding-top:1px;font-weight:500}
-.line.hl .ln{color:${isDark?'#1ABC9C':'#0D8A8A'};font-weight:700}
-.lc{white-space:pre}
-${isDark ? `
-.s-kw{color:#ff79c6;font-weight:600}.s-type{color:#8be9fd}.s-call{color:#50fa7b;font-weight:600}.s-str{color:#f1fa8c}.s-num{color:#bd93f9}.s-cmt{color:#6272a4;font-style:italic}.s-attr{color:#ff79c6}.s-prop{color:#50fa7b}.s-plain{color:#f8f8f2}.s-dot{color:#f8f8f2}.s-preproc{color:#ffb86c;font-weight:600}
-` : `
-.s-kw{color:#AD3DA4;font-weight:600}.s-type{color:#4B21B0}.s-call{color:#326D74;font-weight:600}.s-str{color:#C41A16}.s-num{color:#1C00CF}.s-cmt{color:#707F8C;font-style:italic}.s-attr{color:#AD3DA4}.s-prop{color:#326D74}.s-plain{color:#1F1F24}.s-dot{color:#1F1F24}.s-preproc{color:#78492A;font-weight:600}
-`}
-</style></head><body>${html}</body></html>`;
-
+  const standalone = buildStandaloneHTML(win.outerHTML, isDark);
   navigator.clipboard.writeText(standalone).then(() => {
     const btn = document.querySelector('.btn-copy');
     const orig = btn.textContent;
     btn.textContent = '복사 완료!';
     btn.style.background = '#D6F5F0';
     btn.style.color = '#0D8A8A';
-    setTimeout(() => {
-      btn.textContent = orig;
-      btn.style.background = '';
-      btn.style.color = '';
-    }, 1500);
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 1500);
   });
 }
 
-// ---- Auto-render on Cmd+Enter ----
+function buildStandaloneHTML(bodyHTML, isDark) {
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f5;padding:40px}
+.code-window{width:fit-content;min-width:580px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.1)}
+.titlebar{background:${isDark?'#2a2a3a':'#e8e8ee'};height:38px;display:flex;align-items:center;padding:0 14px;gap:7px;position:relative;border-bottom:1px solid ${isDark?'#333345':'#d8d8e0'}}
+.dot{width:11px;height:11px;border-radius:50%}.dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
+.titlebar-text{position:absolute;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#888899;font-weight:500}
+.code-body{background:${isDark?'#1e1e2e':'#fff'};padding:18px 0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.82}
+.line{display:flex;align-items:center;padding:0 20px 0 0;min-height:25px;border-left:4px solid transparent}
+.line.hl{background:${isDark?'rgba(13,138,138,.15)':'#D6F5F0'};border-left-color:#0D8A8A}
+.line.diff-add{background:${isDark?'rgba(40,167,69,.13)':'#e6ffed'};border-left-color:${isDark?'#3fb950':'#28a745'}}
+.line.diff-del{background:${isDark?'rgba(215,58,73,.13)':'#ffeef0'};border-left-color:${isDark?'#f85149':'#d73a49'}}
+.ln{color:${isDark?'#4a4a6a':'#8a8a9a'};width:36px;text-align:right;margin-right:20px;margin-left:16px;flex-shrink:0;user-select:none;font-size:12px;padding-top:1px;font-weight:500}
+.line.hl .ln{color:${isDark?'#1ABC9C':'#0D8A8A'};font-weight:700}
+.line.diff-add .ln{color:${isDark?'#3fb950':'#28a745'};font-weight:700}
+.line.diff-del .ln{color:${isDark?'#f85149':'#d73a49'};font-weight:700}
+.lc{white-space:pre}
+.callout{flex-shrink:0;margin-left:18px;margin-right:20px;background:${isDark?'#2a2500':'#fffbe6'};border:1.5px solid ${isDark?'#7a6000':'#e6c000'};border-radius:7px;padding:2px 11px;font-size:11.5px;font-family:system-ui,sans-serif;font-weight:500;color:${isDark?'#e0c050':'#7a5c00'};white-space:nowrap;position:relative;line-height:1.7}
+.callout::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:${isDark?'#7a6000':'#e6c000'}}
+.callout::after{content:'';position:absolute;right:calc(100% - 1.5px);top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:${isDark?'#2a2500':'#fffbe6'}}
+${isDark?`
+.s-kw{color:#ff79c6;font-weight:600}.s-type{color:#8be9fd}.s-call{color:#50fa7b;font-weight:600}.s-str{color:#f1fa8c}.s-num{color:#bd93f9}.s-cmt{color:#6272a4;font-style:italic}.s-attr{color:#ff79c6}.s-prop{color:#50fa7b}.s-plain{color:#f8f8f2}.s-dot{color:#f8f8f2}.s-preproc{color:#ffb86c;font-weight:600}
+`:`
+.s-kw{color:#AD3DA4;font-weight:600}.s-type{color:#4B21B0}.s-call{color:#326D74;font-weight:600}.s-str{color:#C41A16}.s-num{color:#1C00CF}.s-cmt{color:#707F8C;font-style:italic}.s-attr{color:#AD3DA4}.s-prop{color:#326D74}.s-plain{color:#1F1F24}.s-dot{color:#1F1F24}.s-preproc{color:#78492A;font-weight:600}
+`}
+</style></head><body>${bodyHTML}</body></html>`;
+}
+
+// ================================================================
+// Keyboard shortcuts
+// ================================================================
 document.getElementById('codeInput').addEventListener('keydown', function(e) {
-  // Tab support
   if (e.key === 'Tab') {
     e.preventDefault();
-    const start = this.selectionStart;
-    const end = this.selectionEnd;
-    this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
-    this.selectionStart = this.selectionEnd = start + 4;
+    const s = this.selectionStart, end = this.selectionEnd;
+    this.value = this.value.substring(0, s) + '    ' + this.value.substring(end);
+    this.selectionStart = this.selectionEnd = s + 4;
     return;
   }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-    e.preventDefault();
-    render();
-  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); render(); }
 });
 
-// Initial render
+// ================================================================
+// Init
+// ================================================================
+renderTabBar();
+applyInputs(tabs[0]);
 render();
-
-// ---- Capture code window as canvas ----
-async function captureSnapshot() {
-  const el = document.getElementById('codeWindow');
-  const canvas = await html2canvas(el, {
-    scale: 3,
-    backgroundColor: null,
-    useCORS: true,
-    logging: false,
-  });
-  return canvas;
-}
-
-// ---- Flash button feedback ----
-function flashBtn(btn, text) {
-  const orig = btn.innerHTML;
-  const origBg = btn.style.background;
-  const origColor = btn.style.color;
-  btn.innerHTML = text;
-  btn.style.background = '#D6F5F0';
-  btn.style.color = '#0D8A8A';
-  setTimeout(() => {
-    btn.innerHTML = orig;
-    btn.style.background = origBg;
-    btn.style.color = origColor;
-  }, 1500);
-}
-
-// ---- Copy as image to clipboard ----
-async function copyImage() {
-  const btn = document.getElementById('btnCopyImg');
-  btn.innerHTML = '⏳ 캡처 중...';
-
-  try {
-    const canvas = await captureSnapshot();
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-
-    await navigator.clipboard.write([
-      new ClipboardItem({ 'image/png': blob })
-    ]);
-    flashBtn(btn, '✅ 복사 완료!');
-  } catch (err) {
-    // Fallback: clipboard API not supported, offer download instead
-    console.error(err);
-    flashBtn(btn, '⚠️ 브라우저 미지원');
-    // Auto-trigger download as fallback
-    saveImage();
-  }
-}
-
-// ---- Save as PNG file ----
-async function saveImage() {
-  const canvas = await captureSnapshot();
-  const link = document.createElement('a');
-  const filename = (document.getElementById('filenameInput').value || 'code')
-    .replace(/\.[^.]+$/, '');
-  link.download = `${filename}_snapshot.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
 </script>
 
 </body>
