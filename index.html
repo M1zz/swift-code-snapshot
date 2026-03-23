@@ -224,6 +224,62 @@
     white-space: nowrap;
   }
 
+  /* Font size controls */
+  .font-size-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid #d8d8e0;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #f4f4f8;
+  }
+  .font-size-ctrl button {
+    width: 26px; height: 26px;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6a6a7a;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.12s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .font-size-ctrl button:hover { background: #e4e4ea; }
+  .font-size-ctrl span {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    color: #444;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  /* Wrap toggle */
+  .wrap-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #d8d8e0;
+    background: #f4f4f8;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6a6a7a;
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .wrap-btn:hover { border-color: #0D8A8A; color: #0D8A8A; }
+  .wrap-btn.active { background: #0D8A8A; color: #fff; border-color: #0D8A8A; }
+
+  /* Wrap mode: continuation lines indent to align past the line-number */
+  .code-body.wrap-on .lc {
+    white-space: pre-wrap;
+    word-break: break-all;
+    padding-left: 56px;   /* ln width(36) + margin-right(20) */
+    text-indent: -56px;
+  }
+
   /* Annotation textarea row */
   .annot-row {
     padding: 0;
@@ -518,8 +574,14 @@
   <!-- Preview Panel -->
   <div class="panel">
     <div class="panel-header">
-      <div style="display:flex;align-items:center;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <h2>미리보기</h2>
+        <div class="font-size-ctrl">
+          <button onclick="adjustFontSize(-1)" title="폰트 작게">−</button>
+          <span id="fontSizeLabel">14px</span>
+          <button onclick="adjustFontSize(+1)" title="폰트 크게">+</button>
+        </div>
+        <button class="wrap-btn" id="wrapBtn" onclick="toggleWrap()">줄바꿈</button>
         <div class="scale-btns">
           <button class="scale-btn" data-scale="1" onclick="setScale(1)">1x</button>
           <button class="scale-btn" data-scale="2" onclick="setScale(2)">2x</button>
@@ -852,6 +914,30 @@ function applyHighlightColor(hex) {
   root.style.setProperty('--hl-accent', hex);
   root.style.setProperty('--hl-bg',      `rgba(${r},${g},${b},0.12)`);
   root.style.setProperty('--hl-bg-dark', `rgba(${r},${g},${b},0.20)`);
+}
+
+// ================================================================
+// Font size
+// ================================================================
+let codeFontSize = 14;
+
+function adjustFontSize(delta) {
+  codeFontSize = Math.min(20, Math.max(10, codeFontSize + delta));
+  document.getElementById('codeBody').style.fontSize = codeFontSize + 'px';
+  document.getElementById('fontSizeLabel').textContent = codeFontSize + 'px';
+  requestAnimationFrame(checkScaleWarning);
+}
+
+// ================================================================
+// Line wrap
+// ================================================================
+let wrapEnabled = false;
+
+function toggleWrap() {
+  wrapEnabled = !wrapEnabled;
+  document.getElementById('codeBody').classList.toggle('wrap-on', wrapEnabled);
+  document.getElementById('wrapBtn').classList.toggle('active', wrapEnabled);
+  requestAnimationFrame(checkScaleWarning);
 }
 
 // ================================================================
