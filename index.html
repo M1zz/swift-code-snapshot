@@ -248,12 +248,16 @@
   .wrap-btn:hover { border-color: #0D8A8A; color: #0D8A8A; }
   .wrap-btn.active { background: #0D8A8A; color: #fff; border-color: #0D8A8A; }
 
-  /* Wrap mode: continuation lines indent to align past the line-number */
+  /* Wrap mode */
   .code-body.wrap-on .lc {
     white-space: pre-wrap;
     word-break: break-all;
-    padding-left: 56px;   /* ln width(36) + margin-right(20) */
-    text-indent: -56px;
+  }
+  .code-body.wrap-on .line {
+    align-items: flex-start;
+  }
+  .code-body.wrap-on .ln {
+    padding-top: 0.1em;
   }
 
   /* Annotation textarea row */
@@ -561,6 +565,11 @@
           <button onclick="adjustFontSize(+1)" title="폰트 크게">+</button>
         </div>
         <button class="wrap-btn" id="wrapBtn" onclick="toggleWrap()">줄바꿈</button>
+        <div class="font-size-ctrl">
+          <button onclick="adjustWidth(-40)" title="너비 줄이기">◀</button>
+          <span id="widthLabel">580</span>
+          <button onclick="adjustWidth(+40)" title="너비 늘리기">▶</button>
+        </div>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="btn btn-copy" id="btnCopyImg" onclick="copyImage()">📋 이미지 복사</button>
@@ -907,6 +916,17 @@ function toggleWrap() {
   wrapEnabled = !wrapEnabled;
   document.getElementById('codeBody').classList.toggle('wrap-on', wrapEnabled);
   document.getElementById('wrapBtn').classList.toggle('active', wrapEnabled);
+}
+
+// ================================================================
+// Preview width
+// ================================================================
+let previewWidth = 580;
+
+function adjustWidth(delta) {
+  previewWidth = Math.max(320, Math.min(1200, previewWidth + delta));
+  document.getElementById('codeWindow').style.minWidth = previewWidth + 'px';
+  document.getElementById('widthLabel').textContent = previewWidth;
 }
 
 // ================================================================
