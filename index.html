@@ -512,7 +512,10 @@
 
     <div class="panel-header">
       <h2>Swift 코드 입력</h2>
-      <button class="btn btn-primary" onclick="render()">미리보기 →</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-secondary" onclick="formatIndent()" title="인덴테이션 정렬">⇥ 정렬</button>
+        <button class="btn btn-primary" onclick="render()">미리보기 →</button>
+      </div>
     </div>
 
     <div class="input-area">
@@ -1059,6 +1062,43 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); render(); }
 });
+
+// ================================================================
+// Live preview (debounced)
+// ================================================================
+let _liveTimer = null;
+function debouncedRender() {
+  clearTimeout(_liveTimer);
+  _liveTimer = setTimeout(render, 120);
+}
+['codeInput','filenameInput','hlInput','addedInput','removedInput','annotationsInput'].forEach(id => {
+  document.getElementById(id).addEventListener('input', debouncedRender);
+});
+
+// ================================================================
+// Indent formatter
+// ================================================================
+function formatIndent() {
+  const ta = document.getElementById('codeInput');
+  const lines = ta.value.split('\n');
+  let depth = 0;
+  const INDENT = '    ';
+  const result = lines.map(raw => {
+    const line = raw.trim();
+    if (!line) return '';
+    // Decrease depth before closing braces/brackets
+    const closers = (line.match(/^[}\])]/) || []).length;
+    depth = Math.max(0, depth - closers);
+    const indented = INDENT.repeat(depth) + line;
+    // Count net open minus close braces for next line depth
+    const opens  = (line.match(/[{[(]/g) || []).length;
+    const closes = (line.match(/[}\])]/g) || []).length;
+    depth = Math.max(0, depth + opens - closes);
+    return indented;
+  });
+  ta.value = result.join('\n');
+  render();
+}
 
 // ================================================================
 // Init
