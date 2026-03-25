@@ -1284,26 +1284,71 @@ function debouncedRender() {
 });
 
 // ================================================================
-// Indent formatter
+// Indent formatter (Swift-aware)
 // ================================================================
 function formatIndent() {
   const ta = document.getElementById('codeInput');
   const lines = ta.value.split('\n');
-  let depth = 0;
   const INDENT = '    ';
-  const result = lines.map(raw => {
+  const result = [];
+  let depth = 0;
+
+  // Net brace count — ignores string literals and // comments
+  function netBraces(str) {
+    let n = 0, inStr = false;
+    for (let i = 0; i < str.length; i++) {
+      const c = str[i];
+      if (c === '\\' && inStr)           { i++; continue; }
+      if (c === '"')                     { inStr = !inStr; continue; }
+      if (inStr)                         continue;
+      if (c === '/' && str[i+1] === '/') break;
+      if ('{[('.includes(c)) n++;
+      if ('}])'.includes(c)) n--;
+    }
+    return n;
+  }
+
+  for (const raw of lines) {
     const line = raw.trim();
-    if (!line) return '';
-    // Decrease depth before closing braces/brackets
-    const closers = (line.match(/^[}\])]/) || []).length;
-    depth = Math.max(0, depth - closers);
-    const indented = INDENT.repeat(depth) + line;
-    // Count net open minus close braces for next line depth
-    const opens  = (line.match(/[{[(]/g) || []).length;
-    const closes = (line.match(/[}\])]/g) || []).length;
-    depth = Math.max(0, depth + opens - closes);
-    return indented;
-  });
+    if (!line) { result.push(''); continue; }
+
+    // Apply consecutive leading closers (}, ], ))
+    const leadCount = (line.match(/^[}\])]+/) || [''])[0].length;
+    depth = Math.max(0, depth - leadCount);
+
+    // ── Determine indentation ──────────────────────────────────────
+    let lineDepth;
+
+    if (/^\./.test(line)) {
+      // Dot modifier — find previous non-empty result line
+      let prevTrimmed = '', prevDepth = depth;
+      for (let j = result.length - 1; j >= 0; j--) {
+        if (result[j].trim()) {
+          prevTrimmed = result[j].trim();
+          prevDepth   = Math.round((result[j].length - result[j].trimStart().length) / 4);
+          break;
+        }
+      }
+      if (/^\./.test(prevTrimmed)) {
+        lineDepth = prevDepth;      // chained modifier → same level
+      } else if (/^[}\])]/.test(prevTrimmed)) {
+        lineDepth = prevDepth;      // after closing brace → same level
+      } else {
+        lineDepth = prevDepth + 1;  // after expression → indent +1
+      }
+    } else if (/^(case[ (]|default\s*:)/.test(line)) {
+      // Swift: case/default labels align with the switch keyword (one level up from block body)
+      lineDepth = Math.max(0, depth - 1);
+    } else {
+      lineDepth = depth;
+    }
+
+    result.push(INDENT.repeat(Math.max(0, lineDepth)) + line);
+
+    // Update depth from net braces in remainder of line
+    depth = Math.max(0, depth + netBraces(line.slice(leadCount)));
+  }
+
   ta.value = result.join('\n');
   render();
 }
