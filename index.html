@@ -490,6 +490,15 @@
   @media (max-width: 960px) {
     .container { grid-template-columns: 1fr; }
   }
+
+  /* ---- Vertical layout (wide preview) ---- */
+  .container.vertical {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .container.vertical .preview-wrap {
+    max-height: none;
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -507,7 +516,7 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container" id="appContainer">
 
   <!-- Input Panel -->
   <div class="panel">
@@ -972,10 +981,13 @@ function toggleWrap() {
 // ================================================================
 let previewWidth = 580;
 
+const VERTICAL_THRESHOLD = 620;
+
 function adjustWidth(delta) {
   previewWidth = Math.max(320, Math.min(1200, previewWidth + delta));
   document.getElementById('codeWindow').style.minWidth = previewWidth + 'px';
   document.getElementById('widthLabel').textContent = previewWidth;
+  document.getElementById('appContainer').classList.toggle('vertical', previewWidth > VERTICAL_THRESHOLD);
 }
 
 // ================================================================
