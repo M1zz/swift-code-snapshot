@@ -596,26 +596,75 @@
 // ================================================================
 // Tab state
 // ================================================================
-const DEFAULT_CODE = `import MapKit
-import SwiftUI
+const TAB1_CODE = `import SwiftUI
 
-struct ContentView: View {
-    @State private var places: [MKMapItem] = []
+struct GreetingView: View {
+    let name: String = "Leeo"
 
     var body: some View {
-        Map {
-
+        VStack(spacing: 20) {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(.teal)
+            Text("Hello, \\(name)!")
+                .font(.title)
+                .fontWeight(.semibold)
+            Text("Welcome to Swift")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
+        .padding(40)
     }
 }`;
 
-let tabs = [{
-  id: 1, name: 'Step 1',
-  code: DEFAULT_CODE, filename: 'ContentView.swift',
-  highlights: '8-10', addedLines: '', removedLines: '', annotations: ''
-}];
+const TAB2_CODE = `import SwiftUI
+
+struct GreetingView: View {
+    let name: String = "Leeo"
+    @State private var liked: Bool = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(.teal)
+            Text("Hello, \\(name)!")
+                .font(.title)
+                .fontWeight(.semibold)
+            Button {
+                liked.toggle()
+            } label: {
+                Image(systemName: liked ? "heart.fill" : "heart")
+                    .foregroundStyle(liked ? .red : .gray)
+                    .font(.title2)
+            }
+        }
+        .padding(40)
+    }
+}`;
+
+let tabs = [
+  {
+    id: 1, name: '기본 뷰',
+    code: TAB1_CODE,
+    filename: 'GreetingView.swift',
+    highlights: '4,11',
+    addedLines: '',
+    removedLines: '',
+    annotations: '4: 이름을 여기서 바꿔보세요\n11: \\(name)으로 값 삽입'
+  },
+  {
+    id: 2, name: '@State 추가',
+    code: TAB2_CODE,
+    filename: 'GreetingView.swift',
+    highlights: '5',
+    addedLines: '5,15-21',
+    removedLines: '',
+    annotations: '5: @State로 상태 추적\n16: toggle()로 전환'
+  }
+];
 let activeTabIdx = 0;
-let tabCounter = 1;
+let tabCounter = 2;
 
 function readInputs() {
   return {
