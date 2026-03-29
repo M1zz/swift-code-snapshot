@@ -652,7 +652,7 @@
     <div class="tab-bar" id="tabBar"></div>
 
     <div class="panel-header">
-      <h2>Swift 코드 입력</h2>
+      <h2 id="langLabel">Swift 코드 입력</h2>
       <div style="display:flex;gap:6px;">
         <button class="btn btn-secondary" onclick="formatIndent()" title="인덴테이션 정렬">⇥ 정렬</button>
         <button class="btn btn-primary" onclick="render()">미리보기 →</button>
@@ -661,6 +661,20 @@
 
     <div class="input-area">
       <textarea id="codeInput" placeholder="Swift 코드를 여기에 붙여넣으세요..." spellcheck="false"></textarea>
+    </div>
+
+    <div class="input-row">
+      <label>언어</label>
+      <select id="langSelect" onchange="onLangChange(this.value)" style="height:28px;border:1px solid #d8d8e0;border-radius:6px;padding:0 8px;font-size:13px;background:#fff;color:#1f1f24;cursor:pointer;outline:none;">
+        <option value="swift" selected>Swift</option>
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="kotlin">Kotlin</option>
+        <option value="java">Java</option>
+        <option value="go">Go</option>
+        <option value="rust">Rust</option>
+      </select>
     </div>
 
     <div class="input-row">
@@ -896,72 +910,255 @@ function renderTabBar() {
 }
 
 // ================================================================
-// Swift tokenizer
+// Multi-language tokenizer
 // ================================================================
-const SWIFT_KEYWORDS = new Set([
-  'import','struct','class','enum','protocol','extension','func','var','let',
-  'private','public','internal','fileprivate','open','static','override',
-  'mutating','nonmutating','if','else','guard','switch','case','default',
-  'for','while','repeat','do','catch','throw','throws','rethrows','try',
-  'return','break','continue','fallthrough','in','where','is','as',
-  'some','any','self','Self','nil','true','false','init','deinit',
-  'subscript','typealias','associatedtype','inout','lazy','weak','unowned',
-  'convenience','required','optional','final','dynamic','prefix','postfix',
-  'infix','operator','precedencegroup','async','await','actor','nonisolated',
-  'isolated','consuming','borrowing','sending','get','set','willSet','didSet',
-]);
+const LANG_DEFS = {
+  swift: {
+    name: 'Swift', defaultFile: 'ContentView.swift',
+    comment: '//', attrChar: '@', preprocChar: '#', singleQuoteStr: false,
+    keywords: new Set([
+      'import','struct','class','enum','protocol','extension','func','var','let',
+      'private','public','internal','fileprivate','open','static','override',
+      'mutating','nonmutating','if','else','guard','switch','case','default',
+      'for','while','repeat','do','catch','throw','throws','rethrows','try',
+      'return','break','continue','fallthrough','in','where','is','as',
+      'some','any','self','Self','nil','true','false','init','deinit',
+      'subscript','typealias','associatedtype','inout','lazy','weak','unowned',
+      'convenience','required','optional','final','dynamic','prefix','postfix',
+      'infix','operator','precedencegroup','async','await','actor','nonisolated',
+      'isolated','consuming','borrowing','sending','get','set','willSet','didSet',
+    ]),
+    types: new Set([
+      'View','String','Int','Double','Float','Bool','Array','Dictionary','Set',
+      'Optional','Result','Error','Void','Any','AnyObject','Never',
+      'CGFloat','CGPoint','CGSize','CGRect',
+      'Color','Text','Image','Button','VStack','HStack','ZStack','List',
+      'NavigationStack','NavigationLink','ForEach','ScrollView','Spacer',
+      'Section','Group','Form','TabView','TextField','Toggle','Slider','Picker',
+      'Map','Marker','Annotation',
+      'MKMapItem','MKLocalSearch','MKPlacemark','MKCoordinateRegion',
+      'MKCoordinateSpan','CLLocationCoordinate2D','CLLocation',
+      'MapKit','SwiftUI','UIKit','Foundation','Combine',
+      'State','Binding','ObservedObject','StateObject','EnvironmentObject',
+      'Published','ObservableObject','Environment',
+    ]),
+  },
+  python: {
+    name: 'Python', defaultFile: 'main.py',
+    comment: '#', attrChar: '@', preprocChar: null, singleQuoteStr: true,
+    keywords: new Set([
+      'def','class','import','from','if','elif','else','for','while','try',
+      'except','finally','with','as','return','break','continue','pass',
+      'yield','raise','lambda','and','or','not','in','is','True','False',
+      'None','async','await','global','nonlocal','del','assert','match','case',
+    ]),
+    types: new Set([
+      'int','str','float','bool','list','dict','set','tuple','bytes','bytearray',
+      'object','type','range','enumerate','zip','map','filter','sorted','reversed',
+      'len','print','input','open','super','property','staticmethod','classmethod',
+      'Exception','ValueError','TypeError','KeyError','IndexError','AttributeError',
+      'NameError','OSError','IOError','StopIteration','GeneratorExit',
+    ]),
+  },
+  javascript: {
+    name: 'JavaScript', defaultFile: 'index.js',
+    comment: '//', attrChar: null, preprocChar: null, singleQuoteStr: true,
+    keywords: new Set([
+      'const','let','var','function','class','import','export','default','from',
+      'if','else','for','while','do','try','catch','finally','return','break',
+      'continue','new','typeof','instanceof','in','of','this','null','undefined',
+      'true','false','async','await','yield','throw','delete','void','switch',
+      'case','super','extends','static','get','set','debugger',
+    ]),
+    types: new Set([
+      'String','Number','Boolean','Array','Object','Map','Set','Promise','Error',
+      'Date','RegExp','JSON','Math','console','window','document','fetch',
+      'Response','Request','Symbol','BigInt','Proxy','Reflect','WeakMap',
+      'WeakSet','WeakRef','globalThis','Infinity','NaN','parseInt','parseFloat',
+      'setTimeout','setInterval','clearTimeout','clearInterval','queueMicrotask',
+    ]),
+  },
+  typescript: {
+    name: 'TypeScript', defaultFile: 'index.ts',
+    comment: '//', attrChar: null, preprocChar: null, singleQuoteStr: true,
+    keywords: new Set([
+      'const','let','var','function','class','import','export','default','from',
+      'if','else','for','while','do','try','catch','finally','return','break',
+      'continue','new','typeof','instanceof','in','of','this','null','undefined',
+      'true','false','async','await','yield','throw','delete','void','switch',
+      'case','super','extends','static','get','set','debugger',
+      'type','interface','enum','namespace','declare','abstract','readonly',
+      'never','unknown','keyof','infer','as','satisfies','override','implements',
+      'is','asserts','intrinsic','out','in',
+    ]),
+    types: new Set([
+      'string','number','boolean','any','void','never','unknown','object','symbol','bigint',
+      'String','Number','Boolean','Array','Object','Map','Set','Promise','Error',
+      'Date','RegExp','JSON','Math','console','Record','Partial','Required',
+      'Readonly','Pick','Omit','Exclude','Extract','NonNullable','ReturnType',
+      'Parameters','ConstructorParameters','InstanceType','Awaited',
+    ]),
+  },
+  kotlin: {
+    name: 'Kotlin', defaultFile: 'Main.kt',
+    comment: '//', attrChar: '@', preprocChar: null, singleQuoteStr: true,
+    keywords: new Set([
+      'fun','val','var','class','interface','object','enum','data','sealed',
+      'abstract','override','open','final','private','protected','public',
+      'internal','companion','when','if','else','for','while','do','try',
+      'catch','finally','return','break','continue','throw','is','as','in',
+      'out','by','get','set','init','constructor','this','super','null',
+      'true','false','import','package','typealias','reified','inline',
+      'infix','operator','suspend','crossinline','noinline','tailrec',
+      'external','annotation','actual','expect','lateinit','const',
+    ]),
+    types: new Set([
+      'String','Int','Long','Double','Float','Boolean','Char','Byte','Short',
+      'Array','List','MutableList','Map','MutableMap','Set','MutableSet',
+      'Any','Unit','Nothing','Pair','Triple','Result','Exception','Error',
+      'Throwable','Sequence','Flow','StateFlow','SharedFlow','ViewModel',
+      'LiveData','Context','Activity','Fragment','Composable',
+    ]),
+  },
+  java: {
+    name: 'Java', defaultFile: 'Main.java',
+    comment: '//', attrChar: '@', preprocChar: null, singleQuoteStr: true,
+    keywords: new Set([
+      'public','private','protected','class','interface','enum','abstract',
+      'final','static','void','new','return','if','else','for','while','do',
+      'try','catch','finally','throw','throws','import','package','extends',
+      'implements','super','this','null','true','false','instanceof',
+      'int','long','double','float','boolean','char','byte','short',
+      'break','continue','switch','case','default','synchronized','volatile',
+      'transient','native','strictfp','assert','record','sealed','permits',
+    ]),
+    types: new Set([
+      'String','Integer','Long','Double','Float','Boolean','Character','Byte',
+      'Short','Object','List','ArrayList','LinkedList','Map','HashMap','Set',
+      'HashSet','TreeMap','TreeSet','Optional','Stream','Consumer','Function',
+      'Supplier','Predicate','Runnable','Thread','StringBuilder','StringBuffer',
+      'System','Math','Collections','Arrays','Exception','RuntimeException',
+      'IllegalArgumentException','NullPointerException','CompletableFuture',
+    ]),
+  },
+  go: {
+    name: 'Go', defaultFile: 'main.go',
+    comment: '//', attrChar: null, preprocChar: null, singleQuoteStr: false,
+    keywords: new Set([
+      'func','var','const','type','import','package','if','else','for','range',
+      'switch','case','default','return','break','continue','goto','defer',
+      'go','select','chan','interface','struct','map','make','new','delete',
+      'append','len','cap','copy','close','panic','recover','true','false',
+      'nil','iota','fallthrough',
+    ]),
+    types: new Set([
+      'string','int','int8','int16','int32','int64','uint','uint8','uint16',
+      'uint32','uint64','float32','float64','complex64','complex128','bool',
+      'byte','rune','error','any','uintptr','unsafe',
+    ]),
+  },
+  rust: {
+    name: 'Rust', defaultFile: 'main.rs',
+    comment: '//', attrChar: null, preprocChar: null, singleQuoteStr: false, rustAttr: true,
+    keywords: new Set([
+      'fn','let','mut','const','static','use','mod','pub','crate','super',
+      'self','Self','struct','enum','impl','trait','where','for','in','if',
+      'else','match','while','loop','return','break','continue','move','ref',
+      'type','async','await','dyn','unsafe','extern','as','pub','super',
+      'box','do','final','macro_rules','override','priv','try','typeof',
+      'unsized','virtual','yield','true','false',
+    ]),
+    types: new Set([
+      'String','str','i8','i16','i32','i64','i128','isize',
+      'u8','u16','u32','u64','u128','usize','f32','f64','bool','char',
+      'Option','Result','Vec','HashMap','HashSet','Box','Arc','Rc',
+      'Cell','RefCell','Mutex','RwLock','Cow','BTreeMap','BTreeSet',
+      'Error','Display','Debug','Clone','Copy','Send','Sync','Drop',
+    ]),
+  },
+};
 
-const SWIFT_TYPES = new Set([
-  'View','String','Int','Double','Float','Bool','Array','Dictionary','Set',
-  'Optional','Result','Error','Void','Any','AnyObject','Never',
-  'CGFloat','CGPoint','CGSize','CGRect',
-  'Color','Text','Image','Button','VStack','HStack','ZStack','List',
-  'NavigationStack','NavigationLink','ForEach','ScrollView','Spacer',
-  'Section','Group','Form','TabView','TextField','Toggle','Slider','Picker',
-  'Map','Marker','Annotation',
-  'MKMapItem','MKLocalSearch','MKPlacemark','MKCoordinateRegion',
-  'MKCoordinateSpan','CLLocationCoordinate2D','CLLocation',
-  'MapKit','SwiftUI','UIKit','Foundation','Combine',
-  'State','Binding','ObservedObject','StateObject','EnvironmentObject',
-  'Published','ObservableObject','Environment',
-]);
+let currentLang = 'swift';
+function getLang() { return LANG_DEFS[currentLang]; }
+
+function onLangChange(lang) {
+  const prev = LANG_DEFS[currentLang];
+  currentLang = lang;
+  const def = LANG_DEFS[lang];
+  // Update filename if it still matches previous default
+  const fnInput = document.getElementById('filenameInput');
+  if (!fnInput.value || fnInput.value === prev.defaultFile) {
+    fnInput.value = def.defaultFile;
+  }
+  // Update placeholder text
+  document.getElementById('codeInput').placeholder = def.name + ' 코드를 여기에 붙여넣으세요...';
+  // Update header label
+  document.getElementById('langLabel').textContent = def.name + ' 코드 입력';
+  render();
+}
 
 function tokenizeLine(line) {
+  const lang = getLang();
   const tokens = [];
   let i = 0;
   while (i < line.length) {
+    // whitespace
     if (/\s/.test(line[i])) {
       let s = i; while (i < line.length && /\s/.test(line[i])) i++;
       tokens.push({ type: 'plain', value: line.slice(s, i) }); continue;
     }
-    if (line[i] === '/' && line[i+1] === '/') {
+    // line comment (//)
+    if (lang.comment === '//' && line[i] === '/' && line[i+1] === '/') {
       tokens.push({ type: 'cmt', value: line.slice(i) }); i = line.length; continue;
     }
+    // line comment (#) — Python; must come before # preproc check
+    if (lang.comment === '#' && line[i] === '#') {
+      tokens.push({ type: 'cmt', value: line.slice(i) }); i = line.length; continue;
+    }
+    // double-quoted string
     if (line[i] === '"') {
       let s = i; i++;
       while (i < line.length && line[i] !== '"') { if (line[i] === '\\') i++; i++; }
       if (i < line.length) i++;
       tokens.push({ type: 'str', value: line.slice(s, i) }); continue;
     }
+    // single-quoted string (Python, JS, TS, Kotlin, Java)
+    if (lang.singleQuoteStr && line[i] === "'") {
+      let s = i; i++;
+      while (i < line.length && line[i] !== "'") { if (line[i] === '\\') i++; i++; }
+      if (i < line.length) i++;
+      tokens.push({ type: 'str', value: line.slice(s, i) }); continue;
+    }
+    // numbers
     if (/[0-9]/.test(line[i])) {
-      let s = i; while (i < line.length && /[0-9.]/.test(line[i])) i++;
+      let s = i; while (i < line.length && /[0-9._xXbBoO]/.test(line[i])) i++;
       tokens.push({ type: 'num', value: line.slice(s, i) }); continue;
     }
-    if (line[i] === '@') {
+    // @ attribute / decorator (Swift, Python, Kotlin, Java)
+    if (lang.attrChar === '@' && line[i] === '@') {
       let s = i; i++;
       while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
       tokens.push({ type: 'attr', value: line.slice(s, i) }); continue;
     }
-    if (line[i] === '#') {
+    // # preprocessor (Swift only — after Python comment check above)
+    if (lang.preprocChar === '#' && line[i] === '#') {
       let s = i; i++;
       while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
       tokens.push({ type: 'preproc', value: line.slice(s, i) }); continue;
     }
+    // Rust #[...] attributes
+    if (lang.rustAttr && line[i] === '#' && line[i+1] === '[') {
+      let s = i; i++;
+      while (i < line.length && line[i] !== ']') i++;
+      if (i < line.length) i++;
+      tokens.push({ type: 'attr', value: line.slice(s, i) }); continue;
+    }
+    // identifiers
     if (/[A-Za-z_]/.test(line[i])) {
       let s = i; while (i < line.length && /[A-Za-z0-9_]/.test(line[i])) i++;
       const word = line.slice(s, i);
-      if (SWIFT_KEYWORDS.has(word)) tokens.push({ type: 'kw', value: word });
-      else if (SWIFT_TYPES.has(word)) tokens.push({ type: 'type', value: word });
+      if (lang.keywords.has(word)) tokens.push({ type: 'kw', value: word });
+      else if (lang.types.has(word)) tokens.push({ type: 'type', value: word });
       else if (i < line.length && line[i] === '(') tokens.push({ type: 'call', value: word });
       else if (tokens.length > 0 && tokens[tokens.length-1].value === '.') tokens.push({ type: 'prop', value: word });
       else tokens.push({ type: 'plain', value: word });
